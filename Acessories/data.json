@@ -1,0 +1,24 @@
+[
+    {
+        "Acessory": "Car cover",
+        "Price": 10.00,
+        "amount": 0
+    },
+    {
+
+        "Acessory": "Seat Covers",
+        "Price": 20.00,
+        "amount": 0
+    },
+    {
+        "Acessory": "Phone Holder",
+        "Price": 30.00,
+        "amount": 0
+    },
+    {
+        "Acessory": "Car Trash Can ",
+        "Price": 40.00,
+        "amount": 0
+    }
+    
+  ]
