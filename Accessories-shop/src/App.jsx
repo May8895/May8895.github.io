@@ -1,5 +1,6 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useRef, useState } from 'react';
+import { useLocalStorage } from 'react-use';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -7,54 +8,38 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import productList from './acessory-product.json';
 import DataTable from './components/DataTable';
+import {TotalPriceContext} from './context.jsx';
  
 function App() {
-  const productRef = useRef()
-  const quantityRef = useRef()
 
+  const pRef = useRef()
+  const qRef = useRef()
   const [price, setPrice] = useState(productList[0].price)
-  const [selectedItems, setSelectedItems] = useState([]) // actual data
-  const [filteredSelectedItems, setFilteredSelectedItems] = useState([]) // for show only
+  const [totalPrice, setTotalPrice] = useState(0)
 
-  const deleteItemByIndex = (index) => { 
-    selectedItems.splice(index, 1) 
-    setFilteredSelectedItems([...selectedItems]) 
-    console.table(selectedItems)
-  } 
+  // TODO change this back to normal array, since it is not a state to be displayed any longer.
+  // const [selectedItems, setSelectedItems] = useState([])
+  const [selectedItems, setSelectedItems, remove] = useLocalStorage("selected-items",[])
+  const [filteredSelectedItems, setFilteredSelectedItems] = useState([...selectedItems])
 
-  const sortAsc = () => {
-    const sortedItems = [...selectedItems].sort((a, b) => a.name.localeCompare(b.name));
-    setFilteredSelectedItems(sortedItems);
-    console.table(filteredSelectedItems);
+  const deleteItemByIndex = (index) => {
+    selectedItems.splice(index, 1)
+    setSelectedItems([...selectedItems])
+    setFilteredSelectedItems([...selectedItems])
   }
 
-  const sortDes = () => {
-    const sortedItems = [...selectedItems].sort((a, b) => b.name.localeCompare(a.name));
-    setFilteredSelectedItems(sortedItems);
-  }
+  const filter = (keyword) => {
+    const filteredItems = selectedItems.filter((item) =>
+      item.name.toLowerCase().includes(keyword.toLowerCase())
+    )
 
-  const search = (keyword) => { 
-    setFilteredSelectedItems([ 
-      ...selectedItems.filter(item=> item.name.toLowerCase().includes(keyword.toLowerCase())) 
-    ]) 
-  } 
-
-  const handleSelect = (e)=> {
-    const pid = parseInt(productRef.current.value)
-    const product = productList.find(p=>p.id===pid)
-    console.table(product)
-
-    setPrice(product.price)
+    setFilteredSelectedItems(filteredItems)
   }
 
   const handleAdd = (e) => {
-    const pid = parseInt(productRef.current.value)
-    console.log(typeof pid)
-    const product = productList.find(p => p.id === pid)
-    const q = quantityRef.current.value
-    // console.log(productRef.current.value)
-    // console.table(product)
-
+    const pid = pRef.current.value
+    const product = productList.find(p => p.id == pid)
+    const q = qRef.current.value
     selectedItems.push({
       // id: product.id,
       // name: product.name,
@@ -62,62 +47,64 @@ function App() {
       ...product,
       quantity: q
     })
-    
+    console.table(selectedItems)
     setSelectedItems([...selectedItems])
     setFilteredSelectedItems([...selectedItems])
+  }
 
-    console.table(selectedItems)
+  const handleProductChanged = (e) => {
+    const pid = e.target.value
+    const product = productList.find(p => p.id == pid)
+    const p = product.price
+    console.log(p)
+    setPrice(p)
   }
 
   return (
-    <>
+    <TotalPriceContext.Provider value={{totalPrice, setTotalPrice}}>
       <Container>
         <Row>
-          <Col xs={6}>
-          <Form.Label htmlFor="inputProductName">Product Name</Form.Label>
-          <Form.Select 
-            id="inputProductName" 
-            ref={productRef}
-            onChange={handleSelect}>
-            {
-              productList.map(product => (
-                <option key={product.id} value={product.id}>{product.name}</option>
-              ))
-            }
-          </Form.Select>
-
-          <Form.Label htmlFor="inputPrice">Price</Form.Label>
-          <Form.Control
-            type="number"
-            id="inputPrice"
-            readOnly
-            value={price}
-          />
-
-          <Form.Label htmlFor="inputQuantity">Quantity</Form.Label>
-          <Form.Control
-            type="number"
-            id="inputQuantity"
-            aria-describedby="Quantity"
-            defaultValue={1}
-            ref={quantityRef}
-          />
-
-          <Button variant="success" onClick={handleAdd}>Add</Button>
+          <Col xs={2}>
+            <span>Product:</span>
           </Col>
           <Col>
-            <DataTable
-              data={filteredSelectedItems} 
-              onDelete={deleteItemByIndex}
-              onSearch={search}
-              onAsc={sortAsc}
-              onDes={sortDes}
-              />
+            <Form.Select ref={pRef} onChange={handleProductChanged}>
+              {
+                productList.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))
+              }
+            </Form.Select>
           </Col>
         </Row>
+        <Row>
+          <Col xs={2}>
+            Price:
+          </Col>
+          <Col>
+            {price}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2}>
+            <span>Quantity:</span>
+          </Col>
+          <Col>
+            <input type="number" ref={qRef}
+              defaultValue={1} />
+          </Col>
+        </Row>
+        <Button variant="secondary" onClick={handleAdd}>Add</Button>
+
+        <DataTable
+          data={filteredSelectedItems}
+          onDelete={deleteItemByIndex}
+          onFilter={filter} />
       </Container>
-    </>
+      <h1>Total Price: {totalPrice.toFixed(2)}</h1>
+    </TotalPriceContext.Provider>
   )
+
 }
 
 export default App
