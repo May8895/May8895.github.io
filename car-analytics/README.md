@@ -7,9 +7,7 @@ Welcome to the Car Marketplace Application! This web app is designed for managin
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Technologies](#technologies)
-- [Setup Instructions](#setup-instructions)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Project Overview
