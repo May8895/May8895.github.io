@@ -1,0 +1,45 @@
+.highlighted-cars {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .my-4 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    background-color: #a9a4a2; /* Gray background color */
+    margin-bottom: 20px;
+    padding: 10px; /* Optional: Add some padding for better spacing */
+    border-radius: 8px; /* Optional: Add rounded corners for a softer look */
+      
+  }
+  
+  
+  
+  .table {
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+  }
+  
+  .table th {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .table td img.car-image {
+    width: 50px;
+    height: auto;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
